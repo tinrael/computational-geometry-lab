@@ -1,16 +1,18 @@
 package ua.knu.csc.core;
 
 import java.util.ArrayList;
+
 import java.awt.Point;
+import java.awt.geom.Point2D;
 
 public class CubicBezierCurves {
     private final ArrayList<Point> points;
 
-    private double[] aX;
-    private double[] aY;
+    private double[] aX = null;
+    private double[] aY = null;
 
-    private double[] bX;
-    private double[] bY;
+    private double[] bX = null;
+    private double[] bY = null;
 
     public CubicBezierCurves(ArrayList<Point> points) {
         if (points == null) {
@@ -76,6 +78,31 @@ public class CubicBezierCurves {
 
         this.bX = bX;
         this.bY = bY;
+    }
+
+    public ArrayList<Point2D.Double> getCubicBezierCurvesPoints(int numberOfPointsToSliceEachCubicCurve) {
+        if ((aX == null) || (aY == null) || (bX == null) || (bY == null)) {
+            throw new IllegalStateException("The coefficients (a_{i}, b_{i}) did not compute. " +
+                    "Call the 'calculateCubicBezierCurvesCoefficients' method to compute the coefficients.");
+        }
+
+        ArrayList<Point2D.Double> cubicBezierCurvesPoints = new ArrayList<>();
+
+        double step = 1.0d / (numberOfPointsToSliceEachCubicCurve - 1);
+
+        for (int i = 0; i < (points.size() - 1); i++) {
+            double t;
+            for (int j = 0; j < numberOfPointsToSliceEachCubicCurve; j++) {
+                t = j * step;
+
+                double x = calculateCubicBezierCurveValue(points.get(i).getX(), aX[i], bX[i], points.get(i + 1).getX(), t);
+                double y = calculateCubicBezierCurveValue(points.get(i).getY(), aY[i], bY[i], points.get(i + 1).getY(), t);
+
+                cubicBezierCurvesPoints.add(new Point2D.Double(x, y));
+            }
+        }
+
+        return cubicBezierCurvesPoints;
     }
 
     public static double calculateCubicBezierCurveValue(double a, double b, double c, double d, double t) {

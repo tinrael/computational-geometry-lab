@@ -1,5 +1,7 @@
 package ua.knu.csc.ui;
 
+import java.util.List;
+import java.util.Iterator;
 import java.util.ArrayList;
 
 import java.awt.BasicStroke;
@@ -87,6 +89,28 @@ public class DrawingPanel extends JPanel {
         graphics.drawString(text, origin.x + x, origin.y - y);
     }
 
+    private void drawPolygon(Graphics2D graphics2D, Color color, float width, List<Point> polygon) {
+        Iterator<Point> iterator = polygon.iterator();
+
+        if (iterator.hasNext()) {
+            Point startPoint = iterator.next();
+
+            Point previousPoint = startPoint;
+
+            while (iterator.hasNext()) {
+                Point currentPoint = iterator.next();
+
+                drawLine(graphics2D, previousPoint, currentPoint, color, width);
+
+                previousPoint = currentPoint;
+            }
+
+            if (polygon.size() > 2) {
+                drawLine(graphics2D, previousPoint, startPoint, color, width);
+            }
+        }
+    }
+
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(900,600);
@@ -99,16 +123,7 @@ public class DrawingPanel extends JPanel {
         drawCoordinateAxes((Graphics2D) g);
         drawOrigin((Graphics2D) g);
 
-        int size = convexHullPoints.size();
-
-        int i = 0;
-        for (; i < (size - 1); i++) {
-            drawLine((Graphics2D) g, convexHullPoints.get(i), convexHullPoints.get(i + 1), Color.BLUE, 2f);
-        }
-
-        if (size > 2) {
-            drawLine((Graphics2D) g, convexHullPoints.get(i), convexHullPoints.get(0), Color.BLUE, 2f);
-        }
+        drawPolygon((Graphics2D) g, Color.BLUE, 2f, convexHullPoints);
 
         for (Point point : points) {
             drawPoint((Graphics2D) g, point, Color.RED, 7f);

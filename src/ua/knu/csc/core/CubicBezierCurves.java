@@ -1,12 +1,10 @@
 package ua.knu.csc.core;
 
 import java.util.ArrayList;
-
-import java.awt.Point;
 import java.awt.geom.Point2D;
 
 public class CubicBezierCurves {
-    private final ArrayList<Point> points;
+    private final ArrayList<Point2D> points;
 
     private double[] aX = null;
     private double[] aY = null;
@@ -14,7 +12,7 @@ public class CubicBezierCurves {
     private double[] bX = null;
     private double[] bY = null;
 
-    public CubicBezierCurves(ArrayList<Point> points) {
+    public CubicBezierCurves(ArrayList<Point2D> points) {
         if (points == null) {
             throw new NullPointerException("The specified argument 'points' is null.");
         }

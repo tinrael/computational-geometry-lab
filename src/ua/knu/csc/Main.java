@@ -1,5 +1,6 @@
 package ua.knu.csc;
 
+import ua.knu.csc.core.CubicBezierCurves;
 import ua.knu.csc.core.QuickHull;
 import ua.knu.csc.ui.DrawingPanel;
 
@@ -8,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import java.awt.Dimension;
+import java.awt.geom.Point2D;
 import java.awt.Point;
 import java.awt.Toolkit;
 
@@ -22,7 +24,7 @@ public class Main {
 
         Set<Point> points = new HashSet<>();
         points.add(new Point(60, 110));
-        points.add(new Point(150, 40));
+        points.add(new Point(150, 45));
         points.add(new Point(300, 210));
         points.add(new Point(40, 300));
         points.add(new Point(50, 50));
@@ -33,6 +35,7 @@ public class Main {
         points.add(new Point(10, 200));
         points.add(new Point(300, 175));
         points.add(new Point(170, 210));
+        points.add(new Point(335, 75));
 
         ArrayList<Point> convexHullPoints = QuickHull.findConvexHull(points);
 
@@ -47,18 +50,31 @@ public class Main {
         }
         System.out.println("]");
 
+        CubicBezierCurves cubicBezierCurves = new CubicBezierCurves(convexHullPoints);
+        cubicBezierCurves.calculateCubicBezierCurvesCoefficients();
+
+        ArrayList<Point2D.Double> cubicBezierCurvesPointsInDoublePrecision = cubicBezierCurves.getCubicBezierCurvesPoints(5);
+        ArrayList<Point> cubicBezierCurvesPointsInIntegerPrecision = new ArrayList<>(cubicBezierCurvesPointsInDoublePrecision.size());
+
+        for (Point2D.Double pointInDoublePrecision : cubicBezierCurvesPointsInDoublePrecision) {
+            Point pointInIntegerPrecision = new Point();
+            pointInIntegerPrecision.setLocation(pointInDoublePrecision);
+
+            cubicBezierCurvesPointsInIntegerPrecision.add(pointInIntegerPrecision);
+        }
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI(origin, points, convexHullPoints);
+                createAndShowGUI(origin, points, convexHullPoints, cubicBezierCurvesPointsInIntegerPrecision);
             }
         });
     }
 
-    private static void createAndShowGUI(Point origin, Set<Point> points, ArrayList<Point> convexHullPoints) {
-        JFrame mainWindow = new JFrame("lab5");
+    private static void createAndShowGUI(Point origin, Set<Point> points, ArrayList<Point> convexHullPoints, ArrayList<Point> cubicBezierCurvesPoints) {
+        JFrame mainWindow = new JFrame("lab");
         mainWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        mainWindow.add(new DrawingPanel(origin, points, convexHullPoints));
+        mainWindow.add(new DrawingPanel(origin, points, convexHullPoints, cubicBezierCurvesPoints));
 
         mainWindow.pack();
 

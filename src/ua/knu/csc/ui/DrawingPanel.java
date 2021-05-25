@@ -19,9 +19,11 @@ public class DrawingPanel extends JPanel {
     private final Point origin;
 
     private final Iterable<Point> points;
-    private final ArrayList<Point> convexHullPoints;
 
-    public DrawingPanel(Point origin, Iterable<Point> points, ArrayList<Point> convexHullPoints) {
+    private final ArrayList<Point> convexHullPoints;
+    private final ArrayList<Point> cubicBezierCurvesPoints;
+
+    public DrawingPanel(Point origin, Iterable<Point> points, ArrayList<Point> convexHullPoints, ArrayList<Point> cubicBezierCurvesPoints) {
         if (origin == null) {
             throw new NullPointerException("The specified origin is null.");
         }
@@ -34,9 +36,14 @@ public class DrawingPanel extends JPanel {
             throw new NullPointerException("The specified 'convexHullPoints' argument is null.");
         }
 
+        if (cubicBezierCurvesPoints == null) {
+            throw new NullPointerException("The specified 'cubicBezierCurvesPoints' argument is null.");
+        }
+
         this.origin = origin;
         this.points = points;
         this.convexHullPoints = convexHullPoints;
+        this.cubicBezierCurvesPoints = cubicBezierCurvesPoints;
 
         setBorder(BorderFactory.createLineBorder(Color.RED, 2));
     }
@@ -124,6 +131,7 @@ public class DrawingPanel extends JPanel {
         drawOrigin((Graphics2D) g);
 
         drawPolygon((Graphics2D) g, Color.BLUE, 2f, convexHullPoints);
+        drawPolygon((Graphics2D) g, Color.ORANGE, 2f, cubicBezierCurvesPoints);
 
         for (Point point : points) {
             drawPoint((Graphics2D) g, point, Color.RED, 7f);

@@ -39,6 +39,9 @@ public class Main {
 
         ArrayList<Point> convexHullPoints = QuickHull.findConvexHull(points);
 
+        // Duplicate the first point to the end of the list to draw the cubic Bezier curve from the last to the first point.
+        convexHullPoints.add(convexHullPoints.get(0));
+
         System.out.print("[");
         int size = convexHullPoints.size();
         for (int i = 0; i < size; i++) {
